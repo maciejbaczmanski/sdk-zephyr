@@ -1241,6 +1241,11 @@ struct ieee802154_config {
 			 * in CPU byte order
 			 */
 			uint16_t short_addr;
+
+			/**
+			 * Flag for clearing header IE (e.g during stack reset)
+			 */
+			bool clear_ie;
 		} ack_ie;
 	};
 };
