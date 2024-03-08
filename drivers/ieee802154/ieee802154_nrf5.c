@@ -505,14 +505,14 @@ static bool nrf5_tx_csma_ca(struct net_pkt *pkt, uint8_t *payload)
 
 #if defined(CONFIG_NET_PKT_TXTIME)
 static bool nrf5_tx_at(struct nrf5_802154_data *nrf5_radio, struct net_pkt *pkt,
-		   uint8_t *payload, enum ieee802154_tx_mode mode)
+		   uint8_t *payload, enum ieee802154_tx_mode tx_mode)
 {
 	bool cca = false;
 #if defined(CONFIG_IEEE802154_NRF5_MULTIPLE_CCA)
 	uint8_t max_extra_cca_attempts = 0;
 #endif
 
-	switch (mode) {
+	switch (tx_mode) {
 	case IEEE802154_TX_MODE_TXTIME:
 		break;
 	case IEEE802154_TX_MODE_TXTIME_CCA:
@@ -552,7 +552,23 @@ static bool nrf5_tx_at(struct nrf5_802154_data *nrf5_radio, struct net_pkt *pkt,
 	uint64_t tx_at = nrf_802154_timestamp_phr_to_shr_convert(
 		net_pkt_timestamp_ns(pkt) / NSEC_PER_USEC);
 
-	return nrf_802154_transmit_raw_at(payload, tx_at, &metadata);
+	bool err = nrf_802154_transmit_raw_at(payload, tx_at, &metadata);
+
+	if(!err) {
+		LOG_ERR("tx_at: %llu", tx_at);
+		LOG_ERR("Metadata");
+		LOG_ERR(".frame_props.is_secured: %d",(uint8_t)metadata.frame_props.is_secured);
+		LOG_ERR(".frame_props.dynamic_data_is_set: %d",(uint8_t)metadata.frame_props.dynamic_data_is_set);
+		LOG_ERR(".cca: %d",(uint8_t)metadata.cca);
+		LOG_ERR(".channel: %d",metadata.channel);
+		LOG_ERR(".tx_power.power.use_metadata_value: %d",(uint8_t)metadata.tx_power.use_metadata_value);
+		LOG_ERR(".tx_power.power.power: %d",metadata.tx_power.power);
+		LOG_ERR(".extra_cca_attempts: %d",metadata.extra_cca_attempts);
+		LOG_HEXDUMP_ERR(payload,payload[0],"Payload");
+
+	}
+
+	return err;
 }
 #endif /* CONFIG_NET_PKT_TXTIME */
 
