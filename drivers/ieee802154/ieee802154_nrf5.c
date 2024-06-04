@@ -1011,6 +1011,9 @@ static int nrf5_configure(const struct device *dev,
 		nrf5_data.rx_on_when_idle = config->rx_on_when_idle;
 
 		if (config->rx_on_when_idle == false) {
+#if defined(CONFIG_OPENTHREAD_COPROCESSOR)
+		__ASSERT(false, "Should not happen!!!!");
+#endif
 			(void)nrf_802154_sleep_if_idle();
 		}
 		break;
