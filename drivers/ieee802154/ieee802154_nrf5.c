@@ -1006,14 +1006,14 @@ static int nrf5_configure(const struct device *dev,
 		break;
 #endif /* CONFIG_IEEE802154_NRF5_MULTIPLE_CCA */
 
-	case IEEE802154_CONFIG_RX_ON_WHEN_IDLE:
-		nrf_802154_rx_on_when_idle_set(config->rx_on_when_idle);
+	case IEEE802154_CONFIG_RX_ON_WHEN_IDLE: {
 		nrf5_data.rx_on_when_idle = config->rx_on_when_idle;
+		nrf_802154_rx_on_when_idle_set(nrf5_data.rx_on_when_idle);
 
-		if (config->rx_on_when_idle == false) {
+		if (!nrf5_data.rx_on_when_idle) {
 			(void)nrf_802154_sleep_if_idle();
 		}
-		break;
+	} break;
 
 	default:
 		return -EINVAL;
