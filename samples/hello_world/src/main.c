@@ -5,10 +5,11 @@
  */
 
 #include <stdio.h>
+// volatile const char arr[712624] __attribute__ ((section (".text")));
 
 int main(void)
 {
 	printf("Hello World! %s\n", CONFIG_BOARD_TARGET);
-
+	// printf("arr: %c\n", arr[0]);
 	return 0;
 }
